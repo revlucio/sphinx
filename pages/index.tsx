@@ -4,10 +4,20 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import {useState} from "react";
 
-const Home: NextPage = () => {
-    const [endpoints, setEndpoints] = useState<any[]>([])
+const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
     const [name, setName] = useState<string|null>(null)
     const [url, setUrl] = useState<string|null>(null)
+
+    return <>
+        <label>Name<input type="text" onChange={(e) => setName(e.target.value)} /></label>
+        <label>URL<input type="text" onChange={(e) => setUrl(e.target.value)} /></label>
+        <button onClick={() => onNewEndpoint({name, url})}>Create</button>
+    </>;
+}
+
+const Home: NextPage = () => {
+    const [endpoints, setEndpoints] = useState<any[]>([])
+    const [showRegistrationForm, setShowRegistrationForm] = useState(false)
 
   return (
     <div className={styles.container}>
@@ -23,11 +33,14 @@ const Home: NextPage = () => {
         </h1>
       </main>
 
-        <button>Register endpoint</button>
+        <button onClick={() => setShowRegistrationForm(true)}>Register endpoint</button>
 
-        <label>Name<input type="text" onChange={(e) => setName(e.target.value)} /></label>
-        <label>URL<input type="text" onChange={(e) => setUrl(e.target.value)} /></label>
-        <button onClick={() => setEndpoints(prev => prev.concat([{name, url}]))}>Create</button>
+        {showRegistrationForm &&
+            <RegistrationForm onNewEndpoint={(newEndpoint: any) => {
+                setEndpoints(prev => prev.concat([newEndpoint]));
+                setShowRegistrationForm(false)
+            }}/>
+        }
 
         {endpoints.map(endpoint =>
             <div>
