@@ -4,6 +4,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import {useState} from "react";
 
+
 const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
     const [name, setName] = useState<string|null>(null)
     const [url, setUrl] = useState<string|null>(null)
@@ -16,8 +17,22 @@ const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
 }
 
 const Home: NextPage = () => {
+    const [score, setScore] = useState<number>(0)
     const [endpoints, setEndpoints] = useState<any[]>([])
     const [showRegistrationForm, setShowRegistrationForm] = useState(false)
+
+    const askAQuestion = () => {
+      fetch('/api/hello')
+        .then(res => res.json())
+        .then(json => {
+          if (json.answer === 'failed') {
+            setScore(score => score -10)
+          } else {
+            setScore(score => score +10)
+          }
+        })
+      
+    }
 
   return (
     <div className={styles.container}>
@@ -46,21 +61,11 @@ const Home: NextPage = () => {
             <div>
                 <h2>{endpoint.name}</h2>
                 <h2>{endpoint.url}</h2>
+                <h2>{score}</h2>
             </div>
         )}
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+        <button onClick={askAQuestion}>Ask a question</button>
     </div>
   )
 }
