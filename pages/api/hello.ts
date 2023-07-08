@@ -10,11 +10,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const answer = await fetch('http://localhost:6000')
-    .then(res => res.json())
-    .then(json => json.correct === 'true' ? 'correct' : 'failed')
-    .catch(res => 'failed')
+  const correct = await fetch('http://localhost:6000', {
+    method: 'POST',
+    body: 'What is 1 + 2?',
+    headers: { 'Content-Type': 'text/plain' }
+  })
+    .then(res => {
+      return res.text()
+    })
+    .then(text => {
+      return text === '3'})
+    .catch(() => false)
+
     
-  console.log(answer)
-  res.status(200).json({ answer: answer })
+  res.status(200).json({ correct: correct })
 }

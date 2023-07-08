@@ -35,13 +35,14 @@ test('score goes down after question answer times out', async ({ page }) => {
 });
 
 test('score goes up after question answer passed', async ({ page }) => {
+    // hardcode question to 1 + 2
     const fastify = Fastify({
         logger: true
     })
 
-    fastify.get('/', async (request, reply) => {
-        reply.type('application/json').code(200)
-        return { correct: 'true' }
+    fastify.post('/', async (request, reply) => {
+        reply.type('text/plain').code(200)
+        return '3'
     })
       
     fastify.listen({ port: 6000 }, (err, address) => {
@@ -68,10 +69,10 @@ test('score goes down after question answer fails', async ({ page }) => {
     const fastify = Fastify({
         logger: true
     })
-    
-    fastify.get('/', async (request, reply) => {
-        reply.type('application/json').code(200)
-        return { correct: 'false' }
+
+    fastify.post('/', async (request, reply) => {
+        reply.type('text/plain').code(200)
+        return '2'
     })
       
     fastify.listen({ port: 6000 }, (err, address) => {

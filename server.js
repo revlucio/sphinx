@@ -3,10 +3,9 @@ const fastify = Fastify({
     logger: true
 })
 
-// start a server on 6000 that returns true
-fastify.get('/', async (request, reply) => {
-    reply.type('application/json').code(200)
-    return { hello: 'world' }
+fastify.post('/', async (request, reply) => {
+    reply.type('text/plain').code(200)
+    return '3'
 })
   
 fastify.listen({ port: 6000 }, (err, address) => {

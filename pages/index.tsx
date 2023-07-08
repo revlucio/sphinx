@@ -25,10 +25,11 @@ const Home: NextPage = () => {
       fetch('/api/hello')
         .then(res => res.json())
         .then(json => {
-          if (json.answer === 'failed') {
-            setScore(score => score -10)
+          console.log(json.correct)
+          if (json.correct === true) {
+            setScore(score => score +10)
           } else {
-            setScore(score => score +
+            setScore(score => score -
               10)
           }
         })
