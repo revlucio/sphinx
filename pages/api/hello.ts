@@ -11,7 +11,8 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const answer = await fetch('http://localhost:6000')
-    .then(res => res.status)
+    .then(res => res.json())
+    .then(json => json.correct === 'true' ? 'correct' : 'failed')
     .catch(res => 'failed')
     
   console.log(answer)

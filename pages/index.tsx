@@ -28,7 +28,8 @@ const Home: NextPage = () => {
           if (json.answer === 'failed') {
             setScore(score => score -10)
           } else {
-            setScore(score => score +10)
+            setScore(score => score +
+              10)
           }
         })
       
