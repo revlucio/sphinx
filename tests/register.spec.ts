@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import Fastify from 'fastify'
 
-const setupServerWithAnswer = (answer: string) => {
+const setupServerWithAnswer = ({port, answer}: { port?: number, answer: string }) => {
     const fastify = Fastify({
         logger: true
     });
@@ -11,7 +11,7 @@ const setupServerWithAnswer = (answer: string) => {
         return answer;
     });
 
-    fastify.listen({ port: 6000 }, (err, address) => {
+    fastify.listen({ port: port || 6000 }, (err, address) => {
         if (err)
             throw err;
         console.log(`Server is now listening on ${address}`);
@@ -60,14 +60,14 @@ test('score goes down after question answer times out', async ({ page }) => {
 
 test('score goes up after question answer passed', async ({ page }) => {
     // hardcode question to 1 + 2
-    const server = setupServerWithAnswer('3');
+    const server = setupServerWithAnswer({answer: '3', port: 6001});
 
     await page.goto('http://localhost:3000');
 
     await page.locator('text=Register endpoint').click()
 
     await page.locator('text=Name').fill('Joe')
-    await page.locator('text=URL').fill('http://localhost:6000')
+    await page.locator('text=URL').fill('http://localhost:6001')
     await page.locator('text=Create').click()
     
     await page.locator('text=Ask a question').click()
@@ -80,7 +80,7 @@ test('score goes up after question answer passed', async ({ page }) => {
 
 test('score goes down after question answer fails', async ({ page }) => {
     // hardcode question to 1 + 2
-    const server = setupServerWithAnswer('2');
+    const server = setupServerWithAnswer({answer: '2'});
 
     await page.goto('http://localhost:3000');
 
