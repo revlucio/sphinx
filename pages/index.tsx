@@ -1,9 +1,13 @@
-import type { NextPage } from 'next'
+import type { NextPage, GetServerSideProps, InferGetServerSidePropsType  } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import {useState} from "react";
 
+type EndPoint = {
+  name: string
+  url: string
+  score: number
+}
 
 const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
     const [name, setName] = useState<string|null>(null)
@@ -16,12 +20,21 @@ const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
     </>;
 }
 
-const Home: NextPage = () => {
-    const [score, setScore] = useState<number>(0)
-    const [endpoints, setEndpoints] = useState<any[]>([])
+export const getServerSideProps: GetServerSideProps<{endpointsFromServer: EndPoint[]}> = async () => {
+  const result = await fetch('http://localhost:3000/api/endpoints').then(res => res.json())
+  return {
+    props: { endpointsFromServer: result.endpoints }
+  }
+}
+
+const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [isAsking, setIsAsking] = useState<boolean>(false)  
+  const [score, setScore] = useState<number>(0)
+    const [endpoints, setEndpoints] = useState<EndPoint[]>(endpointsFromServer)
     const [showRegistrationForm, setShowRegistrationForm] = useState(false)
 
     const askAQuestion = () => {
+      setIsAsking(true)
       fetch('/api/hello')
         .then(res => res.json())
         .then(json => {
@@ -32,6 +45,8 @@ const Home: NextPage = () => {
             setScore(score => score -
               10)
           }
+
+          setIsAsking(false)
         })
       
     }
@@ -54,8 +69,11 @@ const Home: NextPage = () => {
 
         {showRegistrationForm &&
             <RegistrationForm onNewEndpoint={(newEndpoint: any) => {
+                fetch('/api/endpoint', { method: 'POST', body: JSON.stringify(newEndpoint) })
+
                 setEndpoints(prev => prev.concat([newEndpoint]));
                 setShowRegistrationForm(false)
+
             }}/>
         }
 
@@ -63,11 +81,12 @@ const Home: NextPage = () => {
             <div>
                 <h2>{endpoint.name}</h2>
                 <h2>{endpoint.url}</h2>
-                <h2>{score}</h2>
+                <h2 data-testid={endpoint.name+"-score"}>{score}</h2>
             </div>
         )}
 
         <button onClick={askAQuestion}>Ask a question</button>
+        {isAsking ? <div>asking...</div> : <div>asked!</div>}
     </div>
   )
 }

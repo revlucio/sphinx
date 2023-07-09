@@ -37,6 +37,10 @@ test('register a new endpoint', async ({ page }) => {
 
     await expect(page.locator('text=Luke')).toBeVisible()
     await expect(page.locator('text=http://localhost:6000')).toBeVisible()
+
+    await page.reload()
+
+    await expect(page.locator('text=http://localhost:6000')).toBeVisible()
 });
 
 test('score goes down after question answer times out', async ({ page }) => {
@@ -44,13 +48,14 @@ test('score goes down after question answer times out', async ({ page }) => {
 
     await page.locator('text=Register endpoint').click()
 
-    await page.locator('text=Name').fill('Luke')
+    await page.locator('text=Name').fill('Harry')
     await page.locator('text=URL').fill('http://localhost:6000')
     await page.locator('text=Create').click()
     
     await page.locator('text=Ask a question').click()
+    await expect(page.locator('text=asked!')).toBeVisible()
 
-    await expect(page.locator('text=-10')).toBeVisible()
+    expect(await page.getByTestId('Harry-score').innerText()).toBe('-10')
 });
 
 test('score goes up after question answer passed', async ({ page }) => {
@@ -61,13 +66,14 @@ test('score goes up after question answer passed', async ({ page }) => {
 
     await page.locator('text=Register endpoint').click()
 
-    await page.locator('text=Name').fill('Luke')
+    await page.locator('text=Name').fill('Joe')
     await page.locator('text=URL').fill('http://localhost:6000')
     await page.locator('text=Create').click()
     
     await page.locator('text=Ask a question').click()
+    await expect(page.locator('text=asked!')).toBeVisible()
 
-    await expect(page.getByText('10', { exact: true })).toBeVisible();
+    expect(await page.getByTestId('Joe-score').innerText()).toBe('10')
 
     await server.close()
 });
@@ -85,8 +91,9 @@ test('score goes down after question answer fails', async ({ page }) => {
     await page.locator('text=Create').click()
     
     await page.locator('text=Ask a question').click()
+    await expect(page.locator('text=asked!')).toBeVisible()
 
-    await expect(page.getByText('-10', { exact: true })).toBeVisible();
+    expect(await page.getByTestId('Luke-score').innerText()).toBe('-10')
 
     await server.close()
 });
