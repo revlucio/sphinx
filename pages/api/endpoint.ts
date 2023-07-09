@@ -8,7 +8,8 @@ export default async function handler(
   const endpoint = JSON.parse(req.body)
     db.endpoints.push({
         url: endpoint.url, 
-        name: endpoint.name 
+        name: endpoint.name,
+        score: 0
     })
     console.log(db.endpoints)
     

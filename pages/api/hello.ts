@@ -10,18 +10,24 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const correct = await fetch(db.endpoints[0]?.url, {
-    method: 'POST',
-    body: 'What is 1 + 2?',
-    headers: { 'Content-Type': 'text/plain' }
-  })
-    .then(res => {
-      return res.text()
-    })
-    .then(text => {
-      return text === '3'})
-    .catch(() => false)
 
-    
+  let correct = false
+  for (const endpoint of db.endpoints) {
+    correct = await fetch(endpoint.url, {
+      method: 'POST',
+      body: 'What is 1 + 2?',
+      headers: { 'Content-Type': 'text/plain' }
+    })
+      .then(res => {
+        return res.text()
+      })
+      .then(text => {
+        return text === '3'})
+      .catch(() => false)
+
+      const index = db.endpoints.findIndex(e => e.url === endpoint.url)
+      db.endpoints[index] = { ...endpoint, score: correct ? endpoint.score + 10 : endpoint.score - 10}
+  }
+
   res.status(200).json({ correct: correct })
 }

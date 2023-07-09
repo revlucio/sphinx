@@ -38,7 +38,6 @@ const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServe
       fetch('/api/hello')
         .then(res => res.json())
         .then(json => {
-          console.log(json.correct)
           if (json.correct === true) {
             setScore(score => score +10)
           } else {
