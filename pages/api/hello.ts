@@ -8,10 +8,10 @@ type Data = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<any>
 ) {
-
   let correct = false
+
   for (const endpoint of db.endpoints) {
     correct = await fetch(endpoint.url, {
       method: 'POST',
@@ -25,9 +25,9 @@ export default async function handler(
         return text === '3'})
       .catch(() => false)
 
-      const index = db.endpoints.findIndex(e => e.url === endpoint.url)
+      const index = db.endpoints.findIndex(e => e.name === endpoint.name)
       db.endpoints[index] = { ...endpoint, score: correct ? endpoint.score + 10 : endpoint.score - 10}
   }
 
-  res.status(200).json({ correct: correct })
+  res.status(200).json({ endpoints: db.endpoints })
 }

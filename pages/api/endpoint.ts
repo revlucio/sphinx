@@ -11,7 +11,6 @@ export default async function handler(
         name: endpoint.name,
         score: 0
     })
-    console.log(db.endpoints)
     
   res.status(200).json({})
 }

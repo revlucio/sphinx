@@ -38,13 +38,7 @@ const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServe
       fetch('/api/hello')
         .then(res => res.json())
         .then(json => {
-          if (json.correct === true) {
-            setScore(score => score +10)
-          } else {
-            setScore(score => score -
-              10)
-          }
-
+          setEndpoints(json.endpoints)
           setIsAsking(false)
         })
       
@@ -77,10 +71,10 @@ const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServe
         }
 
         {endpoints.map(endpoint =>
-            <div>
+            <div key={endpoint.name}>
                 <h2>{endpoint.name}</h2>
                 <h2>{endpoint.url}</h2>
-                <h2 data-testid={endpoint.name+"-score"}>{score}</h2>
+                <h2 data-testid={endpoint.name+"-score"}>{endpoint.score}</h2>
             </div>
         )}
 

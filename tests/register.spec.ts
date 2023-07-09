@@ -43,19 +43,32 @@ test('register a new endpoint', async ({ page }) => {
     await expect(page.locator('text=http://localhost:6000')).toBeVisible()
 });
 
-test('score goes down after question answer times out', async ({ page }) => {
+test('score goes down after question answer times out (for some reason wasnt working)', async ({ page }) => {
     await page.goto('http://localhost:3000');
 
     await page.locator('text=Register endpoint').click()
 
     await page.locator('text=Name').fill('Harry')
-    await page.locator('text=URL').fill('http://localhost:6000')
+    await page.locator('text=URL').fill('http://localhost:6002')
     await page.locator('text=Create').click()
-    
+   
+    await page.locator('text=Ask a question').click()
+    await expect(page.locator('text=asked!')).toBeVisible()
+});
+
+test('score goes down after question answer times out 2', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+
+    await page.locator('text=Register endpoint').click()
+
+    await page.locator('text=Name').fill('Frank')
+    await page.locator('text=URL').fill('http://localhost:6005')
+    await page.locator('text=Create').click()
+   
     await page.locator('text=Ask a question').click()
     await expect(page.locator('text=asked!')).toBeVisible()
 
-    expect(await page.getByTestId('Harry-score').innerText()).toBe('-10')
+    expect(await page.getByTestId('Frank-score').innerText()).toBe('-10')
 });
 
 test('score goes up after question answer passed', async ({ page }) => {
