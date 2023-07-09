@@ -1,0 +1,11 @@
+-run prettier
+-lint everything
+-style table
+-delete button
+
+features:
+-ask more question types
+-randomise values in math questions
+-ask questions on a timer
+-questions get harder
+-question types repeat over time

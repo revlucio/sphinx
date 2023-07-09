@@ -29,7 +29,6 @@ export const getServerSideProps: GetServerSideProps<{endpointsFromServer: EndPoi
 
 const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [isAsking, setIsAsking] = useState<boolean>(false)  
-  const [score, setScore] = useState<number>(0)
     const [endpoints, setEndpoints] = useState<EndPoint[]>(endpointsFromServer)
     const [showRegistrationForm, setShowRegistrationForm] = useState(false)
 
@@ -70,16 +69,28 @@ const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServe
             }}/>
         }
 
-        {endpoints.map(endpoint =>
-            <div key={endpoint.name}>
-                <h2>{endpoint.name}</h2>
-                <h2>{endpoint.url}</h2>
-                <h2 data-testid={endpoint.name+"-score"}>{endpoint.score}</h2>
-            </div>
+        <table>
+          <thead><tr>
+            <td>Player</td>
+            <td>Endpoint</td>
+            <td>Score</td>
+            </tr>
+            </thead>
+            <tbody>
+        {endpoints.sort((a,b) => b.score - a.score).map(endpoint =>
+            <tr key={endpoint.name}>
+                <td>{endpoint.name}</td>
+                <td>{endpoint.url}</td>
+                <td data-testid={endpoint.name+"-score"}>{endpoint.score || 0}</td>
+            </tr>
         )}
+        </tbody>
+        </table>
 
-        <button onClick={askAQuestion}>Ask a question</button>
+         
+        <div><button onClick={askAQuestion}>Ask a question</button>
         {isAsking ? <div>asking...</div> : <div>asked!</div>}
+        </div>
     </div>
   )
 }
