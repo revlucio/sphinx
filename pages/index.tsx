@@ -1,47 +1,64 @@
-import type { NextPage, GetServerSideProps, InferGetServerSidePropsType  } from 'next'
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import {useState} from "react";
+import type {
+  NextPage,
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+} from "next";
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import { useState } from "react";
 
 type EndPoint = {
-  name: string
-  url: string
-  score: number
-}
+  name: string;
+  url: string;
+  score: number;
+};
 
-const RegistrationForm = ({onNewEndpoint}: { onNewEndpoint:any }) => {
-    const [name, setName] = useState<string|null>(null)
-    const [url, setUrl] = useState<string|null>(null)
+const RegistrationForm = ({ onNewEndpoint }: { onNewEndpoint: any }) => {
+  const [name, setName] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
 
-    return <>
-        <label>Name<input type="text" onChange={(e) => setName(e.target.value)} /></label>
-        <label>URL<input type="text" onChange={(e) => setUrl(e.target.value)} /></label>
-        <button onClick={() => onNewEndpoint({name, url})}>Create</button>
-    </>;
-}
+  return (
+    <>
+      <label>
+        Name
+        <input type="text" onChange={(e) => setName(e.target.value)} />
+      </label>
+      <label>
+        URL
+        <input type="text" onChange={(e) => setUrl(e.target.value)} />
+      </label>
+      <button onClick={() => onNewEndpoint({ name, url })}>Create</button>
+    </>
+  );
+};
 
-export const getServerSideProps: GetServerSideProps<{endpointsFromServer: EndPoint[]}> = async () => {
-  const result = await fetch('http://localhost:3000/api/endpoints').then(res => res.json())
+export const getServerSideProps: GetServerSideProps<{
+  endpointsFromServer: EndPoint[];
+}> = async () => {
+  const result = await fetch("http://localhost:3000/api/endpoints").then(
+    (res) => res.json(),
+  );
   return {
-    props: { endpointsFromServer: result.endpoints }
-  }
-}
+    props: { endpointsFromServer: result.endpoints },
+  };
+};
 
-const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [isAsking, setIsAsking] = useState<boolean>(false)  
-    const [endpoints, setEndpoints] = useState<EndPoint[]>(endpointsFromServer)
-    const [showRegistrationForm, setShowRegistrationForm] = useState(false)
+const Home = ({
+  endpointsFromServer,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [isAsking, setIsAsking] = useState<boolean>(false);
+  const [endpoints, setEndpoints] = useState<EndPoint[]>(endpointsFromServer);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 
-    const askAQuestion = () => {
-      setIsAsking(true)
-      fetch('/api/hello')
-        .then(res => res.json())
-        .then(json => {
-          setEndpoints(json.endpoints)
-          setIsAsking(false)
-        })
-      
-    }
+  const askAQuestion = () => {
+    setIsAsking(true);
+    fetch("/api/hello")
+      .then((res) => res.json())
+      .then((json) => {
+        setEndpoints(json.endpoints);
+        setIsAsking(false);
+      });
+  };
 
   return (
     <div className={styles.container}>
@@ -52,47 +69,56 @@ const Home = ({endpointsFromServer}: InferGetServerSidePropsType<typeof getServe
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to Sphinx
-        </h1>
+        <h1 className={styles.title}>Welcome to Sphinx</h1>
       </main>
 
-        <button onClick={() => setShowRegistrationForm(true)}>Register endpoint</button>
+      <button onClick={() => setShowRegistrationForm(true)}>
+        Register endpoint
+      </button>
 
-        {showRegistrationForm &&
-            <RegistrationForm onNewEndpoint={(newEndpoint: any) => {
-                fetch('/api/endpoint', { method: 'POST', body: JSON.stringify(newEndpoint) })
+      {showRegistrationForm && (
+        <RegistrationForm
+          onNewEndpoint={(newEndpoint: any) => {
+            fetch("/api/endpoint", {
+              method: "POST",
+              body: JSON.stringify(newEndpoint),
+            });
 
-                setEndpoints(prev => prev.concat([newEndpoint]));
-                setShowRegistrationForm(false)
+            setEndpoints((prev) => prev.concat([newEndpoint]));
+            setShowRegistrationForm(false);
+          }}
+        />
+      )}
 
-            }}/>
-        }
-
-        <table>
-          <thead><tr>
+      <table>
+        <thead>
+          <tr>
             <td>Player</td>
             <td>Endpoint</td>
             <td>Score</td>
-            </tr>
-            </thead>
-            <tbody>
-        {endpoints.sort((a,b) => b.score - a.score).map(endpoint =>
-            <tr key={endpoint.name}>
+          </tr>
+        </thead>
+        <tbody>
+          {endpoints
+            .sort((a, b) => b.score - a.score)
+            .map((endpoint) => (
+              <tr key={endpoint.name}>
                 <td>{endpoint.name}</td>
                 <td>{endpoint.url}</td>
-                <td data-testid={endpoint.name+"-score"}>{endpoint.score || 0}</td>
-            </tr>
-        )}
+                <td data-testid={endpoint.name + "-score"}>
+                  {endpoint.score || 0}
+                </td>
+              </tr>
+            ))}
         </tbody>
-        </table>
+      </table>
 
-         
-        <div><button onClick={askAQuestion}>Ask a question</button>
+      <div>
+        <button onClick={askAQuestion}>Ask a question</button>
         {isAsking ? <div>asking...</div> : <div>asked!</div>}
-        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

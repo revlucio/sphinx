@@ -1,33 +1,37 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import fetch from 'node-fetch';
-import {db} from '../../src/endpoints'
+import type { NextApiRequest, NextApiResponse } from "next";
+import fetch from "node-fetch";
+import { db } from "../../src/endpoints";
 
 type Data = {
-  correct: boolean
-}
+  correct: boolean;
+};
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>
+  res: NextApiResponse<any>,
 ) {
-  let correct = false
+  let correct = false;
 
   for (const endpoint of db.endpoints) {
     correct = await fetch(endpoint.url, {
-      method: 'POST',
-      body: 'What is 1 + 2?',
-      headers: { 'Content-Type': 'text/plain' }
+      method: "POST",
+      body: "What is 1 + 2?",
+      headers: { "Content-Type": "text/plain" },
     })
-      .then(res => {
-        return res.text()
+      .then((res) => {
+        return res.text();
       })
-      .then(text => {
-        return text === '3'})
-      .catch(() => false)
+      .then((text) => {
+        return text === "3";
+      })
+      .catch(() => false);
 
-      const index = db.endpoints.findIndex(e => e.name === endpoint.name)
-      db.endpoints[index] = { ...endpoint, score: correct ? endpoint.score + 10 : endpoint.score - 10}
+    const index = db.endpoints.findIndex((e) => e.name === endpoint.name);
+    db.endpoints[index] = {
+      ...endpoint,
+      score: correct ? endpoint.score + 10 : endpoint.score - 10,
+    };
   }
 
-  res.status(200).json({ endpoints: db.endpoints })
+  res.status(200).json({ endpoints: db.endpoints });
 }

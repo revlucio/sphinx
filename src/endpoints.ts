@@ -1,15 +1,15 @@
 type EndPoint = {
-    name: string
-    url: string
-    score: number
-}
+  name: string;
+  url: string;
+  score: number;
+};
 
-export const db : {
-    endpoints: EndPoint[]
+export const db: {
+  endpoints: EndPoint[];
 } = {
-    endpoints: []
-}
+  endpoints: [],
+};
 
 export default {
-    db
-}
+  db,
+};
