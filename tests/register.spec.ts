@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import Fastify from 'fastify'
 
-const setupServerWithAnswer = (answer) => {
+const setupServerWithAnswer = (answer: string) => {
     const fastify = Fastify({
         logger: true
     });
@@ -23,7 +23,7 @@ const setupServerWithAnswer = (answer) => {
 test('shows title', async ({ page }) => {
     await page.goto('http://localhost:3000');
 
-    await expect(page.locator('main')).toHaveText('Welcome to Sphinx')
+    await expect(page.locator('main')).toHaveText('Welcome to Sphinx')    
 });
 
 test('register a new endpoint', async ({ page }) => {
@@ -75,7 +75,7 @@ test('score goes up after question answer passed', async ({ page }) => {
 test('score goes down after question answer fails', async ({ page }) => {
     // hardcode question to 1 + 2
     const server = setupServerWithAnswer('2');
-    
+
     await page.goto('http://localhost:3000');
 
     await page.locator('text=Register endpoint').click()
