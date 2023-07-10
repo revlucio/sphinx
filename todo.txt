@@ -1,7 +1,9 @@
--run prettier
 -lint everything
 -style table
 -delete button
+-editor config
+-reliable tests
+-faster tests
 
 features:
 -ask more question types
