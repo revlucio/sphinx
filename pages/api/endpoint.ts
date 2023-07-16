@@ -10,6 +10,7 @@ export default async function handler(
     url: endpoint.url,
     name: endpoint.name,
     score: 0,
+    questionCount: 0,
   });
 
   res.status(200).json({});

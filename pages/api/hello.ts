@@ -6,6 +6,14 @@ type Data = {
   correct: boolean;
 };
 
+const getNextQuestion = (questionCount: number) => {
+  if (questionCount === 1) {
+    return "What is 5 - 7?";
+  }
+
+  return "What is 1 + 2?";
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>,
@@ -13,9 +21,11 @@ export default async function handler(
   let correct = false;
 
   for (const endpoint of db.endpoints) {
+    const index = db.endpoints.findIndex((e) => e.name === endpoint.name);
+
     correct = await fetch(endpoint.url, {
       method: "POST",
-      body: "What is 1 + 2?",
+      body: getNextQuestion(endpoint.questionCount),
       headers: { "Content-Type": "text/plain" },
     })
       .then((res) => {
@@ -26,10 +36,10 @@ export default async function handler(
       })
       .catch(() => false);
 
-    const index = db.endpoints.findIndex((e) => e.name === endpoint.name);
     db.endpoints[index] = {
       ...endpoint,
       score: correct ? endpoint.score + 10 : endpoint.score - 10,
+      questionCount: endpoint.questionCount + 1,
     };
   }
 

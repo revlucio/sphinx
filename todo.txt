@@ -7,6 +7,7 @@
 
 features:
 -ask more question types
+    -start with asserting 1st question, then more
 -randomise values in math questions
 -ask questions on a timer
 -questions get harder

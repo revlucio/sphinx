@@ -2,6 +2,7 @@ type EndPoint = {
   name: string;
   url: string;
   score: number;
+  questionCount: number;
 };
 
 export const db: {
