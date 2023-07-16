@@ -8,11 +8,12 @@ type Data = {
 
 const getNextQuestion = (questionCount: number) => {
   if (questionCount === 1) {
-    return "What is 5 - 7?";
+    return {question:"What is 5 - 7?", answer: '-2'};
   }
 
-  return "What is 1 + 2?";
+  return {question:"What is 1 + 2?", answer: '3'};
 };
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,17 +23,18 @@ export default async function handler(
 
   for (const endpoint of db.endpoints) {
     const index = db.endpoints.findIndex((e) => e.name === endpoint.name);
+    const next = getNextQuestion(endpoint.questionCount)
 
     correct = await fetch(endpoint.url, {
       method: "POST",
-      body: getNextQuestion(endpoint.questionCount),
+      body: next.question,
       headers: { "Content-Type": "text/plain" },
     })
       .then((res) => {
         return res.text();
       })
       .then((text) => {
-        return text === "3";
+        return text === next.answer;
       })
       .catch(() => false);
 

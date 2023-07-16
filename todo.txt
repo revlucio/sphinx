@@ -12,3 +12,8 @@ features:
 -ask questions on a timer
 -questions get harder
 -question types repeat over time
+
+the rest is harder to test!
+
+1. I should write my own client to handle randomness when I need it to pass
+2. seed it when Im testing questions themselves, or otherwise control the randomness

@@ -108,8 +108,7 @@ test("score goes down after question answer fails", async ({ page }) => {
 });
 
 test("asks math questions the first 4 times", async ({ page }) => {
-  // hardcode question to 1 + 2
-  const server = setupServerWithAnswer({ answer: "3", port: 6009 });
+  const server = setupServerWithAnswer({ answer: "-2", port: 6009 });
 
   const scorePage = new ScorePage(page);
   await scorePage.go();
@@ -117,9 +116,11 @@ test("asks math questions the first 4 times", async ({ page }) => {
 
   await scorePage.askQuestion();
   expect(server.getLastQuestion()).toBe("What is 1 + 2?");
+  expect(await scorePage.getScoreFor("Math")).toBe("-10");
 
   await scorePage.askQuestion();
   expect(server.getLastQuestion()).toBe("What is 5 - 7?");
+  expect(await scorePage.getScoreFor("Math")).toBe("0");
 
   await server.fastify.close();
 });
